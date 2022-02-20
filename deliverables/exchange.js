@@ -1,35 +1,3 @@
-// k = 100,019,880,988,011,000,000
-// 'k_balance[msg.sender]' = 998,001,000,000;
-// k_balance[address(this)] = 100,000,000,000,000,000,000
-// 'k_den' = 100,000,000,998,001,000,000;
-// eth_reserves = 10,011,000,000
-// token reserves = 9,990,998,001
-// proportion of eth entitled = 998,001,000,000 * 10^18 / 100,000,000,998,001,000,000 = 9.98 * 10^9
-// num_eth_entitled = 9.98 * 10^9 * 10,011,000,000 / 10^18 
-// 100,000 <= num_eth_entitled ?
-
-//init (createPool) adds 10,000,000,000 (10^10) wei
-//this gives us a k of 10^20
-//user then adds 1,000,000 wei
-//k_user = 10^12 
-
-//user then asks to remove 100,000 wei, which of course they are entitled to.
-
-//k_den = 10^20 + 10^12
-//k_user = 998,001,000,000 ~ 10^12
-//portion_entitled = 10^12 / (10^20 + 10^12)
-//eth entitled = portion_entitled * eth_reserves = (10^12 / (10^20 + 10^12)) * 10,011,000,000 = 100.....this is WRONG it SHOULD be 10^6, we are off by 10^4
-
-
-//1000 * 1000 = 1,000,000 
-//500 * 500 =  250,000 
-//k_den = 1,000,000 + 250,000 = 1,250,000
-//in reality, A is entitled to 1000 eth (2/3 of them)
-//even though they are entitled to 50% of the eth. 
-
-// =================== CS251 DEX Project =================== // 
-//        @authors: Simon Tao '22, Mathew Hogan '22          //
-// ========================================================= //                  
 
 // sets up web3.js
 const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
@@ -693,7 +661,6 @@ const exchange_contract = new web3.eth.Contract(exchange_abi, exchange_address);
 // =============================================================================
 //                              Provided Functions
 // =============================================================================
-// Reading and understanding these should help you implement the below functions
 
 /*** INIT ***/
 async function init() {
@@ -710,7 +677,6 @@ async function init() {
         await token_contract.methods.approve(exchange_address, total_supply).send({from:web3.eth.defaultAccount});
         // initialize pool with equal amounts of ETH and tokens, so exchange rate begins as 1:1
         await exchange_contract.methods.createPool(total_supply).send({from:web3.eth.defaultAccount, value : total_supply, gas : 999999});
-        // All accounts start with 0 of your tokens. Thus, be sure to swap before adding liquidity.
 
     }
 }
@@ -744,8 +710,6 @@ function log(description, obj) {
 
 /*** ADD LIQUIDITY ***/
 async function addLiquidity(amountEth, maxSlippagePct) {
-    /** TODO: ADD YOUR CODE HERE **/
-    // do we need to check that the sender has enough eth?
     eth_balance = await web3.eth.getBalance(web3.eth.defaultAccount);
     
     if (eth_balance >= amountEth) { 
@@ -909,9 +873,6 @@ $("#exchange-title-header").html(exchange_name);
 //                                SANITY CHECK
 // =============================================================================
 
-// This section contains a sanity check test that you can use to ensure your code
-// works. We will be testing your code this way, so make sure you at least pass
-// the given test. You are encouraged to write more tests!
 
 // Uncomment the call to sanityCheck() (last line) to have it run when index.html is launched.
 
